@@ -40,7 +40,7 @@ If $I(R)$ is low, the patch is perfectly periodic and ambiguous, raising an *a p
 
 ### Stage 1: Hyperdimensional Multi-Scale Shortlist
 To avoid exhaustive $O(N^2)$ pixel sliding, we build a shortlist using Vector Symbolic Architectures (Hyperdimensional Computing).
-*   **Bipolar space**: $\{-1,+1\}^D$ with $D \approx 10,000$.
+*   **Bipolar space**: $\{-1,+1\}^D$ with $D = 2{,}048$.
 *   **Binding**: Elementwise XOR ($\otimes$).
 *   **Bundling**: Elementwise majority vote.
 *   **Patch Encoding**: $\mathrm{HV}(P) = \mathrm{sign}\Big(\sum_{i,j} \mathrm{HV}_{\mathrm{val}}\big(q(P[i,j])\big)\otimes \mathrm{HV}_x(i)\otimes \mathrm{HV}_y(j)\Big)$
@@ -111,11 +111,12 @@ python localize.py --reference path/to/ref.png --search path/to/search.png --jso
 
 ### 3. Evaluating Batch Metrics
 Runs the entire generated manifest and reports $1px/2px/4px/5px$ pass rates and errors.
-```python
-# (Using the evaluation runner in Python)
-from src.eval.runner import EvaluationRunner
-runner = EvaluationRunner("results/dataset/manifest.csv", "results/eval")
-runner.run_all()
+```bash
+# Standalone evaluator (NCC + Fourier-Mellin, no PyTorch dependency)
+python run_eval.py
+
+# Full pipeline evaluator (requires PyTorch + gudhi)
+python -c "from src.eval.runner import EvaluationRunner; EvaluationRunner('results/dataset/manifest.csv', 'results/eval').run_all()"
 ```
 
 ### 4. Running the GUI Console

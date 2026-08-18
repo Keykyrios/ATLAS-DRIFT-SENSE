@@ -1,3 +1,14 @@
+"""Cubical persistent homology for topological signature computation.
+
+Computes D_1 (loop) persistence diagrams via sublevel-set filtration
+using GUDHI, and measures topological distance between diagrams via
+the bottleneck distance. Used by Stage 5 for tie-breaking among
+near-identical periodic candidate patches.
+
+Reference:
+    Edelsbrunner & Harer, "Computational Topology: An Introduction", AMS, 2010.
+"""
+
 import numpy as np
 import gudhi
 

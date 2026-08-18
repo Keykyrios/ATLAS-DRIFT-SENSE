@@ -1,3 +1,14 @@
+"""Fourier-Mellin log-polar phase correlation for coarse pose estimation.
+
+Implements the Reddy-Chatterji technique: magnitude spectra are remapped
+to log-polar coordinates, phase correlation recovers (scale, rotation),
+and a second phase correlation on corrected images recovers translation.
+
+Reference:
+    Reddy & Chatterji, "An FFT-based technique for translation, rotation,
+    and scale-invariant image registration", IEEE TIP, 1996.
+"""
+
 import cv2
 import numpy as np
 from typing import Tuple

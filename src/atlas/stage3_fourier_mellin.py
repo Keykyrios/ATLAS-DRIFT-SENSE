@@ -1,3 +1,11 @@
+"""Stage 3: Fourier-Mellin coarse pose estimation.
+
+Computes closed-form initial (scale, rotation, translation) estimates
+for each surviving candidate via log-polar phase correlation (Reddy-Chatterji).
+The scale ratio is measured, not assumed, satisfying the cross-magnification
+requirement of the problem statement.
+"""
+
 import numpy as np
 import cv2
 from typing import List

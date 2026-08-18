@@ -1,3 +1,16 @@
+"""Stage 0: Kolmogorov/NCD Informativeness Gate.
+
+Estimates the intrinsic ambiguity of the reference patch before search begins
+by computing the Normalized Compression Distance (NCD) between the patch and
+its own copy shifted by the dominant lattice period. A low NCD indicates a
+highly periodic (and therefore ambiguous) reference, triggering an a-priori
+low-confidence flag.
+
+References:
+    Li et al., "The Similarity Metric", IEEE Trans. Info. Theory, 2004.
+    Cilibrasi & Vitányi, "Clustering by Compression", IEEE Trans. Info. Theory, 2005.
+"""
+
 import zlib
 import numpy as np
 import scipy.signal

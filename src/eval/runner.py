@@ -1,6 +1,7 @@
 import os
 import cv2
 import json
+import numpy as np
 from src.datagen.manifest import ManifestManager
 from src.atlas.pipeline import ATLASPipeline
 from .metrics import euclidean_error, pass_rate_at_threshold
@@ -12,11 +13,15 @@ class EvaluationRunner:
         self.pipeline = ATLASPipeline()
         
     def run_all(self):
+        # Process all 30 pairs
         entries = self.manifest.get_all()
         results = []
         
+        os.makedirs(self.out_dir, exist_ok=True)
+        metrics_path = os.path.join(self.out_dir, "metrics.json")
+        
         for idx, entry in enumerate(entries):
-            print(f"Evaluating {idx+1}/{len(entries)}: {entry['pair_id']}")
+            print(f"Evaluating {idx+1}/{len(entries)}: {entry['pair_id']}", flush=True)
             
             ref_path = entry['ref_path']
             search_path = entry['search_path']
@@ -33,6 +38,7 @@ class EvaluationRunner:
             y_true = float(entry['y_true'])
             
             err = euclidean_error(res.x, res.y, x_true, y_true)
+            print(f" -> Error: {err:.2f}px, Confidence: {res.confidence:.4f}", flush=True)
             
             results.append({
                 "pair_id": entry['pair_id'],
@@ -47,21 +53,19 @@ class EvaluationRunner:
                 "timings": res.stage_timings
             })
             
-        # Compute summary
-        errors = [r['error'] for r in results]
-        summary = {
-            "mean_error": float(np.mean(errors)) if errors else 0.0,
-            "median_error": float(np.median(errors)) if errors else 0.0,
-            "max_error": float(np.max(errors)) if errors else 0.0,
-            "pass_rate_5px": pass_rate_at_threshold(errors, 5.0),
-            "pass_rate_4px": pass_rate_at_threshold(errors, 4.0),
-            "pass_rate_2px": pass_rate_at_threshold(errors, 2.0),
-            "pass_rate_1px": pass_rate_at_threshold(errors, 1.0)
-        }
-        
-        os.makedirs(self.out_dir, exist_ok=True)
-        with open(os.path.join(self.out_dir, "metrics.json"), 'w') as f:
-            json.dump({"summary": summary, "results": results}, f, indent=2)
+            # Save iteratively
+            errors = [r['error'] for r in results]
+            summary = {
+                "mean_error": float(np.mean(errors)) if errors else 0.0,
+                "median_error": float(np.median(errors)) if errors else 0.0,
+                "max_error": float(np.max(errors)) if errors else 0.0,
+                "pass_rate_5px": pass_rate_at_threshold(errors, 5.0),
+                "pass_rate_4px": pass_rate_at_threshold(errors, 4.0),
+                "pass_rate_2px": pass_rate_at_threshold(errors, 2.0),
+                "pass_rate_1px": pass_rate_at_threshold(errors, 1.0)
+            }
+            with open(metrics_path, 'w') as f:
+                json.dump({"summary": summary, "results": results}, f, indent=2)
             
-        print(f"Evaluation complete. Mean error: {summary['mean_error']:.2f}px")
+        print(f"Evaluation complete. Mean error: {summary['mean_error']:.2f}px", flush=True)
         return summary

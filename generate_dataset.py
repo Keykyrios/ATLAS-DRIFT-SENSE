@@ -42,13 +42,14 @@ def generate_pair(config: dict, out_dir: str, pair_id: str, is_dram: bool):
     rotation_deg = rng.uniform(-2.0, 2.0)
     
     # Pick a random center for the reference in the search image
-    # Avoiding borders so the patch is fully within the search image
-    margin = int(100 / scale_ratio / 2)
+    # A 1000x1000 reference at scale 0.1 corresponds to a 100x100 patch in search.
+    # So margin in search image is 100 / 2 = 50. We use 60 for safety with rotation.
+    margin = 60
     center_x = rng.integers(margin, 1000 - margin)
     center_y = rng.integers(margin, 1000 - margin)
     
     ref_base, transform_matrix = crop_reference(
-        search_base, scale_ratio, rotation_deg, center_x, center_y, ref_size=100
+        search_base, scale_ratio, rotation_deg, center_x, center_y, ref_size=1000
     )
     
     # 3. Apply independent noise and degradations

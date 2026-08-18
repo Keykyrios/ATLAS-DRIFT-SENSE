@@ -1,3 +1,10 @@
+"""Stage 4: Conformal Geometric Algebra (CGA) joint refinement.
+
+Refines the Fourier-Mellin pose estimates to sub-pixel accuracy by
+optimizing all four DOF (s, θ, tx, ty) jointly on the Sim(2) Lie group
+manifold via the matrix exponential map.
+"""
+
 import numpy as np
 from typing import List, Tuple
 from .types import PoseEstimate, Candidate

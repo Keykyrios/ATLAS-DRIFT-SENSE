@@ -1,3 +1,9 @@
+"""Core data types for the ATLAS pipeline.
+
+Defines the structured containers passed between pipeline stages:
+Candidate, PoseEstimate, ATLASResult, and InformativenessReport.
+"""
+
 from dataclasses import dataclass
 from typing import Dict, Any, Optional
 

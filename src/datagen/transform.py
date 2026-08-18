@@ -19,26 +19,44 @@ def crop_reference(
     Returns:
         (reference_img, true_transform_matrix_for_validation)
     """
-    # The reference is physically a zoomed-in version. 
-    # To simulate this, we extract a patch from `search_img` of size `ref_size / scale_ratio`,
-    # then scale it down to `ref_size`, and rotate it.
+    # The reference is a 1000x1000 image that physically corresponds to a small patch in the search image.
+    # The scale_ratio is ~0.1, meaning the patch in the search image is ~100x100.
+    # We want to map points in the Reference image (0 to 1000) back to the Search image.
+    # So M maps Ref -> Search.
+    # M must apply scale_ratio (e.g. 0.1) and rotation, and map the center of Ref (500,500) to (center_x, center_y).
     
-    src_h, src_w = search_img.shape
+    # Affine matrix mapping Ref to Search:
+    # 1. Translate Ref center (ref_size/2, ref_size/2) to origin.
+    # 2. Scale by scale_ratio and rotate.
+    # 3. Translate to (center_x, center_y) in Search.
     
-    # Base patch size in search coordinates
-    patch_size_in_search = int(ref_size / scale_ratio)
+    th_rad = np.deg2rad(rotation_deg)
+    s = scale_ratio
     
-    # Define affine transform to extract the rotated, scaled patch from the given center
-    M = cv2.getRotationMatrix2D((center_x, center_y), rotation_deg, scale_ratio)
+    # R_S maps from origin-centered Ref to origin-centered Search
+    R_S = np.array([
+        [s * np.cos(th_rad), -s * np.sin(th_rad)],
+        [s * np.sin(th_rad), s * np.cos(th_rad)]
+    ])
     
-    # We want the output image to be exactly `ref_size x ref_size`, centered around (center_x, center_y) in the src.
-    # We adjust the translation part of M so the requested center ends up in the middle of the ref_size window.
-    M[0, 2] += (ref_size / 2) - center_x
-    M[1, 2] += (ref_size / 2) - center_y
+    M = np.zeros((2, 3))
+    M[:, :2] = R_S
+    
+    # Center of reference
+    cx_ref, cy_ref = ref_size / 2.0, ref_size / 2.0
+    
+    # M * [cx_ref, cy_ref]^T + t = [center_x, center_y]^T
+    # t = [center_x, center_y]^T - M * [cx_ref, cy_ref]^T
+    t = np.array([center_x, center_y]) - R_S @ np.array([cx_ref, cy_ref])
+    M[:, 2] = t
+    
+    # We want to produce the Reference image. We need to warp the Search image.
+    # cv2.warpAffine with WARP_INVERSE_MAP uses M to map destination (Ref) pixels back to source (Search).
+    # Since our M maps Ref -> Search, this is exactly what we need!
     
     ref_img = cv2.warpAffine(
         search_img, M, (ref_size, ref_size), 
-        flags=cv2.INTER_CUBIC, 
+        flags=cv2.INTER_CUBIC | cv2.WARP_INVERSE_MAP, 
         borderMode=cv2.BORDER_CONSTANT,
         borderValue=0
     )

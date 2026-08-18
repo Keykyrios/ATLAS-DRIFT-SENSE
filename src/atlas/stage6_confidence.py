@@ -1,3 +1,10 @@
+"""Stage 6: Fused confidence scoring and final report.
+
+Computes a single repeatable confidence scalar by fusing NCC, HDC cosine
+similarity, topological distance, and informativeness scores with calibrated
+weights. Applies the closest-to-center fallback rule for unresolved ties.
+"""
+
 import numpy as np
 from typing import List, Tuple
 from .types import Candidate, InformativenessReport, ATLASResult

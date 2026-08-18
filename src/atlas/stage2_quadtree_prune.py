@@ -1,3 +1,11 @@
+"""Stage 2: 4-adic Quadtree ultrametric branch-and-bound pruning.
+
+Refines the Stage 1 shortlist using the 4-adic metric induced by
+Morton (Z-order) codes. The Lipschitz-bounded upper score at each
+quadtree node provides a provable discard criterion, reducing
+expected refinement cost from O(N^2) to O(N log N).
+"""
+
 import numpy as np
 from typing import List
 from .types import Candidate

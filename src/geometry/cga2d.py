@@ -1,12 +1,27 @@
+"""Conformal Geometric Algebra (CGA) based Sim(2) joint refinement.
+
+Implements Stage 4 of the ATLAS pipeline: gradient descent on the
+Sim(2) Lie group manifold for sub-pixel similarity-transform estimation.
+Uses matrix exponential updates along bivector generators to avoid
+coordinate singularities (gimbal lock) inherent in naive alternating
+optimization of (s, θ, tx, ty).
+
+References:
+    Hitzer & Sangwine, "Foundations of Conic Conformal Geometric Algebra
+    and Compact Versors for Rotation, Translation and Scaling", 2019.
+"""
+
 import cv2
 import numpy as np
 import scipy.linalg
 
+
 class CGA2DSim:
-    """
-    Rigorous Sim(2) Lie Group implementation for joint similarity refinement.
-    Implements the versor composition V = T * R * D for similarity transforms.
-    Performs gradient descent along the bivector tangent space.
+    """Sim(2) Lie Group optimizer for joint scale-rotation-translation refinement.
+
+    Decomposes the 4-DOF similarity transform into bivector generators of
+    the Lie algebra sim(2) and performs gradient ascent on NCC via the
+    group exponential map.
     """
     def __init__(self, ref_img: np.ndarray, search_img: np.ndarray):
         self.ref_img = ref_img.astype(np.float32)
@@ -21,14 +36,14 @@ class CGA2DSim:
         self.G_ty = np.array([[0, 0, 0], [0, 0, 1], [0, 0, 0]], dtype=np.float64)
 
     def _build_matrix(self, s: float, theta: float, tx: float, ty: float) -> np.ndarray:
-        """Builds initial Sim(2) matrix. Note: theta in degrees."""
+        """Builds the Sim(2) affine matrix from (s, θ, tx, ty). θ is in degrees."""
         th_rad = np.deg2rad(theta)
         # To rotate around center, we translate to origin, rotate/scale, translate back, then add tx, ty
         T_center_inv = np.array([[1, 0, -self.cx], [0, 1, -self.cy], [0, 0, 1]])
         T_center = np.array([[1, 0, self.cx], [0, 1, self.cy], [0, 0, 1]])
         
         R_S = np.array([
-            [s * np.cos(th_rad), -s * np.np.sin(th_rad), 0],
+            [s * np.cos(th_rad), -s * np.sin(th_rad), 0],
             [s * np.sin(th_rad), s * np.cos(th_rad), 0],
             [0, 0, 1]
         ])
@@ -38,24 +53,27 @@ class CGA2DSim:
         return T_trans @ T_center @ R_S @ T_center_inv
 
     def _warp_image(self, M: np.ndarray) -> np.ndarray:
-        # M maps from ref to search. We need M_inv to pull search pixels back to ref.
-        # But wait, the standard OpenCV affine warp takes a 2x3 matrix mapping ref->search
-        # and warpAffine computes the inverse mapping internally if we pass WARP_INVERSE_MAP.
-        # Actually it's easier to just invert M explicitly to be sure.
+        """Warps the search image back into the reference frame using M^{-1}."""
         M_inv = np.linalg.inv(M)
         M_cv2 = M_inv[:2, :]
-        warped = cv2.warpAffine(self.search_img, M_cv2, (self.w, self.h), 
-                                flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
-        return warped
+        return cv2.warpAffine(
+            self.search_img, M_cv2, (self.w, self.h),
+            flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE
+        )
 
     def _compute_ncc(self, img1: np.ndarray, img2: np.ndarray) -> float:
-        res = cv2.matchTemplate(img1, img2, cv2.TM_CCOEFF_NORMED)
-        return res[0][0]
+        """Normalized cross-correlation between two same-sized images."""
+        return cv2.matchTemplate(img1, img2, cv2.TM_CCOEFF_NORMED)[0][0]
 
-    def refine(self, init_s: float, init_theta: float, init_tx: float, init_ty: float, 
+    def refine(self, init_s: float, init_theta: float, init_tx: float, init_ty: float,
                max_iter: int = 20, lr: float = 0.05, tol: float = 1e-4) -> tuple:
-        """
-        Gradient descent directly on the Sim(2) Lie algebra.
+        """Refines (s, θ, tx, ty) via gradient ascent on the Sim(2) manifold.
+
+        Uses finite-difference gradients along the four bivector generators
+        of sim(2), composed via the matrix exponential map.
+
+        Returns:
+            (s_refined, theta_deg, tx, ty, final_ncc, converged)
         """
         # M maps points in reference image to points in search image
         # Note: init_s is the scale factor from ref -> search

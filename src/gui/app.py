@@ -1,7 +1,11 @@
 import sys
+import os
+
+# Ensure project root is on sys.path when run as a script
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 from PyQt6.QtWidgets import QApplication
 from src.gui.main_window import ATLASMainWindow
-import os
 
 def main():
     app = QApplication(sys.argv)

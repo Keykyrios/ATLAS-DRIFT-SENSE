@@ -1,3 +1,13 @@
+"""Stage 5: Persistent-homology topological tie-break.
+
+Resolves ambiguity among near-tied candidates (within the NCC noise floor)
+using the bottleneck distance between 1-dimensional (loop) persistence
+diagrams computed via cubical sublevel-set filtration. Periodic lattices
+with identical intensity statistics but differing fine connectivity
+(missing contacts, merged vias) are separated by their topological
+signature rather than photometric correlation.
+"""
+
 import numpy as np
 import cv2
 from typing import List

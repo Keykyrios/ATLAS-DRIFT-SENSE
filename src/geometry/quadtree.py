@@ -1,3 +1,11 @@
+"""Morton (Z-order) code computation and 4-adic ultrametric distance.
+
+Provides the number-theoretic primitives used by Stage 2: bit-interleaved
+Morton codes as truncated 4-adic integers, the 4-adic valuation (common
+Z-order prefix length), and the induced ultrametric distance d_4 = 4^{-v_4}.
+"""
+
+
 def _interleave_bits(x: int, y: int) -> int:
     """Interleaves bits of x and y to produce a Morton (Z-order) code."""
     res = 0
