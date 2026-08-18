@@ -1,0 +1,11 @@
+architecture: "DRAM"
+feature_size_f: 10 # Minimum feature size F in pixels
+unit_cell_type: "6F2" # 6F2 or 8F2
+defect_rate: 0.005 # Probability of missing contact
+boundary_irregularity: true
+
+noise:
+  a_range: [0.5, 1.5] # Poisson shot noise dominant parameter range
+  b_range: [2.0, 5.0] # Gaussian detector floor range
+  psf_sigma_range: [0.5, 1.2]
+  edge_brightening_boost: 1.5

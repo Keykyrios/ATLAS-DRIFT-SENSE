@@ -1,0 +1,37 @@
+# Stage 0: Informativeness Gate
+stage0:
+  compressor_level: 9 # Max zlib compression level
+  tau_max: 50 # Maximum pixel shift to search for lattice period
+  ncd_threshold: 0.15 # Calibrated empirical threshold for I(R)
+
+# Stage 1: HDC Shortlist
+stage1:
+  d_dimensions: 10000 # Hypervector space dimension
+  intensity_bins: 16
+  rotation_hypotheses: [-2, 0, 2] # Exact 2-degree bounds
+  scale_hypotheses: [0.090, 0.095, 0.100, 0.105, 0.110] # Span 9:1 to 11:1 scale
+  stride: 4 # Step size for sliding window
+  top_k: 20 # Keep top 20 candidates
+
+# Stage 2: Quadtree Prune
+stage2:
+  max_depth: 6
+  lipschitz_constant_multiplier: 1.5
+  exhaustive_fallback: false # If true, disables pruning
+
+# Stage 4: CGA Refinement
+stage4:
+  max_iterations: 20
+  learning_rate: 0.05
+  convergence_threshold: 1e-4
+
+# Stage 5: Topology Tie-break
+stage5:
+  ncc_noise_floor_delta: 0.015 # Candidates within this NCC of max are considered tied
+
+# Stage 6: Confidence Fusing
+stage6:
+  w_ncc: 0.4
+  w_hdc: 0.2
+  w_topo: 0.3
+  w_info: 0.1

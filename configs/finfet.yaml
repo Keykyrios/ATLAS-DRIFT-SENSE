@@ -1,0 +1,12 @@
+architecture: "FinFET"
+fin_pitch: 12
+gate_pitch: 20
+num_gates: 2 # 1 or 2 gate bars
+defect_rate: 0.002
+boundary_irregularity: true
+
+noise:
+  a_range: [0.5, 1.5]
+  b_range: [2.0, 5.0]
+  psf_sigma_range: [0.5, 1.2]
+  edge_brightening_boost: 1.2

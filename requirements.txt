@@ -1,0 +1,10 @@
+numpy==1.26.4
+scipy==1.12.0
+opencv-python==4.9.0.80
+gudhi==3.9.0
+PyQt6==6.6.1
+pyqtgraph==0.13.3
+matplotlib==3.8.3
+scikit-learn==1.4.1.post1
+PyYAML==6.0.1
+pytest==8.0.2
