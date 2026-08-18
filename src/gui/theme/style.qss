@@ -1,0 +1,46 @@
+/* Dark, high-contrast fab tool console aesthetic */
+QMainWindow {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+QTabWidget::pane {
+    border: 1px solid #333;
+    background-color: #1a1a1a;
+}
+
+QTabBar::tab {
+    background-color: #2d2d2d;
+    color: #888;
+    padding: 8px 16px;
+    border: 1px solid #333;
+    border-bottom: none;
+    font-family: Consolas, monospace;
+}
+
+QTabBar::tab:selected {
+    background-color: #1a1a1a;
+    color: #00e5ff; /* Teal accent */
+    border-top: 2px solid #00e5ff;
+}
+
+QLabel {
+    color: #e0e0e0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+QPushButton {
+    background-color: #007bb5;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #0093d6;
+}
+
+QPushButton:pressed {
+    background-color: #005a87;
+}
