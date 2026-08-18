@@ -50,11 +50,12 @@ This yields a candidate shortlist $\mathcal{K}$ in near-linear time using bit-pa
 
 ### Stage 2: $4$-adic Quadtree Ultrametric Pruning
 We refine the shortlist bounds using the $p$-adic numbers.
-*   **Morton Code**: A depth-$d$ Morton address $a = (a_1 a_2 \dots a_d)$ is identified as a truncated $4$-adic integer:
 
-    $$ A = \sum_{i=1}^{d} a_i\,4^{\,i-1} \in \mathbb{Z}/4^{d}\mathbb{Z} \subset \mathbb{Z}_4 $$
+**Morton Code**: A depth-$d$ Morton address $a = (a_1 a_2 \dots a_d)$ is identified as a truncated $4$-adic integer:
 
-*   **Ultrametric**: The $4$-adic valuation $v_4(A-A')$ equals the length of the common Z-order prefix. The induced distance is $d_4(A,A') = 4^{-v_4(A-A')}$.
+$$ A = \sum_{i=1}^{d} a_i\,4^{\,i-1} \in \mathbb{Z}/4^{d}\mathbb{Z} \subset \mathbb{Z}_4 $$
+
+**Ultrametric**: The $4$-adic valuation $v_4(A-A')$ equals the length of the common Z-order prefix. The induced distance is $d_4(A,A') = 4^{-v_4(A-A')}$.
 
 This ultrametric corresponds exactly to spatial nesting distance in a quadtree. We estimate the image Lipschitz constant $L$ and use $Score(\nu) + L \cdot 4^{-k} \cdot \text{size}$ to prune subtrees in $O(N \log N)$ expected time, providing a mathematically provable branch-and-bound discard criterion.
 
@@ -64,7 +65,7 @@ Magnitude spectra $|\mathcal{F}(R)|$ and $|\mathcal{F}(T_i)|$ are remapped to lo
 
 ### Stage 4: Conformal Geometric Algebra Joint Refinement
 We refine $(s,\theta,t_x,t_y)$ jointly using a Matrix Lie Group implementation of the $Sim(2)$ similarity group.
-A translation, rotation, and uniform dilation are composed multiplicatively on the manifold. We perform gradient descent along the bivector generators of the Lie algebra ($\mathfrak{sim}(2)$):
+A translation, rotation, and uniform dilation are composed multiplicatively on the manifold. We perform gradient descent along the bivector generators of the Lie algebra $ \mathfrak{sim}(2) $:
 
 $$ V_{k+1} = \exp\!\big(-\eta\,\nabla_{\mathfrak{g}} E(V_k)\big)\,V_k $$
 
