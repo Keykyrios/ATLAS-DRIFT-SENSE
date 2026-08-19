@@ -1,9 +1,9 @@
 # ATLAS / Drift-Sense
 
 **Algebraic-Topological Localization via Adic Search**  
-*A Cross-Magnification Navigation-Error Recovery Framework for the Applied Materials "Drift-Sense" Problem Statement.*
+<p>A Cross-Magnification Navigation-Error Recovery Framework for the Applied Materials "Drift-Sense" Problem Statement.</p>
+<a href="https://drive.google.com/file/d/1zIfAn4Uxm3uyfOP8QHdTE9ZnstmNc2gh/view?usp=sharing"><strong> Read the Whitepaper (Mathematical Specification)</strong></a>
 
----
 
 ## 1. Problem Restatement and Formal Definition
 
