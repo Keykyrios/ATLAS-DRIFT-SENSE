@@ -2,7 +2,7 @@
 
 **Algebraic-Topological Localization via Adic Search**  
 <p>A Cross-Magnification Navigation-Error Recovery Framework for the Applied Materials "Drift-Sense" Problem Statement.</p>
-<a href="https://drive.google.com/file/d/1YIOklz82BnywGOdqOaRihj8NBXZYgv3e/view?usp=sharing"><strong> Read the Whitepaper (Mathematical Specification)</strong></a>
+<a href="https://drive.google.com/file/d/1YIOklz82BnywGOdqOaRihj8NBXZYgv3e/view"><strong> Read the Whitepaper (Mathematical Specification)</strong></a>
 
 
 ## 1. Problem Restatement and Formal Definition
